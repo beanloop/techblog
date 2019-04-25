@@ -2,8 +2,8 @@ module.exports = {
   siteMetadata: {
     title: `Beanloop Tech Blog`,
     author: `Beanloop`,
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsby-starter-blog-demo.netlify.com/`,
+    description: `A programming tech blog were Beanloop share knoledge and experiences.`,
+    siteUrl: `https://beanloop.github.io/techblog/`,
     social: {
       twitter: `BeanloopDev`,
     },
