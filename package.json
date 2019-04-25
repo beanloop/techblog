@@ -1,6 +1,5 @@
 {
-  "name": "beanloop-tech-blog",
-  "private": true,
+  "name": "techblog",
   "description": "A programming tech blog were Beanloop share knowledge and experiences.",
   "version": "0.1.0",
   "author": "Beanloop <kontakt@beanloop.se>",
