@@ -8,6 +8,7 @@ module.exports = {
       twitter: `BeanloopDev`,
     },
   },
+  pathPrefix: "/techblog",
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
