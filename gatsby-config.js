@@ -3,12 +3,11 @@ module.exports = {
     title: `Beanloop Tech Blog`,
     author: `Beanloop`,
     description: `A programming tech blog were Beanloop share knowledge and experiences.`,
-    siteUrl: `https://beanloop.github.io/techblog/`,
+    siteUrl: `https://tech.beanloop.se`,
     social: {
       twitter: `BeanloopDev`,
     },
   },
-  pathPrefix: "/techblog",
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
