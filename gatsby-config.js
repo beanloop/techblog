@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `Beanloop Tech Blog`,
     author: `Beanloop`,
-    description: `A programming tech blog were Beanloop share knoledge and experiences.`,
+    description: `A programming tech blog were Beanloop share knowledge and experiences.`,
     siteUrl: `https://beanloop.github.io/techblog/`,
     social: {
       twitter: `BeanloopDev`,
