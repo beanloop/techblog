@@ -60,7 +60,7 @@ function add(x) {
 
 Let's examine this and see what's going on. First, we declare a function named `add`. It takes one argument, `x`, which is a number. Second, we return (remember, first-class citizen) another function - an anonymous one, which takes a parameter `y`, which is also a number. Lastly, the function that we have returned adds `x` and `y` together, returning the sum of them.
 
-Now that we know how our `add` function works, Let's put it to use. We are now going to use our rights as first-class citizens and store functions in variables. Let's use our `add` function to make a really useful function that adds the number 42 to another number.
+Now that we know how our `add` function works, let's put it to use. We are now going to use our rights as first-class citizens and store functions in variables. Let's use our `add` function to make a really useful function that adds the number 42 to another number.
 
 ```js
 const add42 = add(42)
@@ -92,7 +92,7 @@ Using functions this way lets us define a template so we can create multiple new
 
 So, now that you know how to return functions from other functions, let's take a look at how we can pass functions as an argument to other functions.
 
-For this example, Let's build a small function that works much like an `ifThen` statement. This function should take a boolean `condition` and a function `ifTrue`, that only runs if the `condition` is true.
+For this example, let's build a small function that works much like an `ifThen` statement. This function should take a boolean `condition` and a function `ifTrue`, that only runs if the `condition` is true.
 
 ```js
 function ifThen(condition, ifTrue) {
@@ -226,7 +226,7 @@ map([1, 2, 3, 4], n => n * 2) // [2, 4, 6, 8]
 
 `Array.prototype.filter` is, just like `Array.prototype.map`, another very useful higher-order function that exists on arrays. Much like `map`, the passed-in function will run for every element in the array. And just like `map`, this function returns a new array. Unlike map, however, we do not return a new object here. Instead, we return a boolean - `true` if the current element should be included in the new array, and `false` if not.
 
-For example, Let's say we have a pretty dashboard, full of beautiful graphs that display meaningful data. Let's make it a line chart, that displays multiple lines, and we want to have the ability to toggle certain lines on and off.
+For example, say we have a pretty dashboard, full of beautiful graphs that display meaningful data. Let's make it a line chart, that displays multiple lines, and we want to have the ability to toggle certain lines on and off.
 
 The data could look something like this:
 
@@ -276,7 +276,7 @@ Once again, the higher-order function version is easier to grasp, and we don't n
 
 Just as the previous functions (`map`, `filter`), `reduce` takes a callback function - called a reducer function - as the first argument. However, this callback function has a slight difference from the functions passed to `map` and `filter`. It takes an `accumulator` as the first argument, and the element it's currently operating (`currentValue`) on as the second. The `reduce` function also has a second argument, `initialValue`, which can be sent in to set the `accumulator` to have a value the first iteration. `reduce` is often referred to as `fold` withing other functional programming languages.
 
-Let's look at an example. Let's take our shopping cart again. Say you want to present the total price of the shopping cart. This is a handy use for reduce!
+Let's look at an example - our shopping cart. Say you want to present the total price of the shopping cart. This is a handy use for reduce!
 
 ```js
 const addProductPriceToTotal = (total, product) => total + product.totalPrice
@@ -462,7 +462,7 @@ element.addEventListener("click", () => console.log("I run on clicks!"))
 
 ## Writing our own higher-order function!
 
-Now that you are somewhat familiar with higher-order functions, both those that can return functions and those that take functions as arguments, Let's try to build some of our own, useful higher-order functions!
+Now that you are somewhat familiar with higher-order functions, both those that can return functions and those that take functions as arguments, let's try to build some of our own, useful higher-order functions!
 
 ### Drying up code with higher-order functions
 
@@ -512,7 +512,7 @@ function makeTypeChecker() {
 }
 ```
 
-The next step is to figure out what to check the type of the element against. Remember, that the inner function can remember arguments and variables from the outer function due to the outer functions containing scope. So, Let's pass in a string to check the type against.
+The next step is to figure out what to check the type of the element against. Remember, that the inner function can remember arguments and variables from the outer function due to the outer functions containing scope. So, let's pass in a string to check the type against.
 
 ```js
 function makeTypeChecker(type) {
