@@ -25,7 +25,7 @@ Well, turns out that first class citizens are a special group that enjoys some p
 
 Take a good look at number 2 and 3, and remember those two.
 
-This programming paradigm has many other characteristics, but thats a topic for another blog post.
+This programming paradigm has many other characteristics, but that is a topic for another blog post.
 
 Javascript has some characteristics of a functional programming language, one of those being that it treats functions as, guess what?
 Thats right, first class citizens!
@@ -52,7 +52,7 @@ This might look wierd with all those arrows, so lets take a look at them with th
 
 ```js
 function add(x) {
-  return function innerAdd(y) {
+  return function(y) {
     return x + y;
   };
 }
@@ -127,9 +127,9 @@ ifThen(false, () => console.log('Was true'), () => console.log('Was false')); //
 
 Remember when I said that even if you had not heard about higher order functions before reading this, you had probably already used them anyway. Well, turns out that javascript has some built in higher order functions that operates on arrays. Let's take a look at 3 of them, and why you should use them instead of regular loops.
 
-### Array.map
+### Array.prototype.map
 
-`Array.map` is a function takes a callback function and runs it over over each element in the array, returning a new array. It's great for transforming the values of an array without mutating them.¨
+`Array.prototype.map` is a function takes a callback function and runs it over over each element in the array, returning a new array. It's great for transforming the values of an array without mutating them.¨
 
 Lets say you have a shopping cart with some items. These items have a `quantity` and an `itemPrice`, but for presentational purposes, you want to show the total price. Mapping the `products` array to a new one and adding a `totalPrice` property is a prefect usage of the `map` function.
 
@@ -197,9 +197,9 @@ In the solution using the higher order function `map`, the implementation detail
 
 Which one do you think is easier to grasp at a first glance?
 
-### Array.filter
+### Array.prototype.filter
 
-`Array.filter` is, just like `Array.map`, another very useful higher order function that exists on arrays. Much like `map`, the passed in function will be run for every element in the array. And just like `map`, this function returns a new array. Unlike map however, we do not return a new object here. Instead, we return a boolean - `true` if the current element should be included in the new array, and `false` if not.
+`Array.prototype.filter` is, just like `Array.prototype.map`, another very useful higher order function that exists on arrays. Much like `map`, the passed in function will be run for every element in the array. And just like `map`, this function returns a new array. Unlike map however, we do not return a new object here. Instead, we return a boolean - `true` if the current element should be included in the new array, and `false` if not.
 
 For example, lets say we have pretty dashboard, full of beautiful graphs that display meaningful data. Let's make it a line chart, that displays multiple lines, and we want to have the ability to toggle certain lines on and off.
 
@@ -245,9 +245,9 @@ for (let i = 0; i < veryImportantData.length; i++) {
 
 Once again, the higher order function version is easier to grasp, and we don't need to care about how the loop is working, or how the array is created. It's all abstracted away from us, focusing on the important part - filtering logic.
 
-### Array.reduce
+### Array.prototype.reduce
 
-`Array.reduce`, while very useful, is a bit harder to grasp than `Array.map` and `Array.filter`, it is very versatile, and can be used to build new objects, numbers, strings, or arrays.
+`Array.prototype.reduce`, while very useful, is a bit harder to grasp than `Array.prototype.map` and `Array.prototype.filter`, it is very versatile, and can be used to build new objects, numbers, strings, or arrays.
 
 It takes a reducer function as argument, that is run on every value. However, this reducer function has a slight difference with the former two functions we have talked about. It takes an `accumulator` as the first argument, and the element it's currently operating on. The `reduce` function also has a second argument, `initialValue`, which can be sent in to set the `accumulator` to have a value the first iteration.
 
@@ -298,6 +298,31 @@ Let's take a look at another example, creating objects with reduce. Take our sho
 }
 ```
 
+Lets also take a look at how the products array looks like, since our short term memory is failing us.
+
+```js
+const products = [
+  {
+    id: 1,
+    name: 'Iphone 7',
+    quantity: 1,
+    itemPrice: 1000
+  },
+  {
+    id: 2,
+    name: 'Air Pods',
+    quantity: 1,
+    itemPrice: 200
+  },
+  {
+    id: 3,
+    name: 'Iphone 7 case',
+    quantity: 3,
+    itemPrice: 25
+  }
+];
+```
+
 No problemo, `reduce` to the rescue.
 
 ```js
@@ -316,14 +341,13 @@ const checkoutRequest = {
 };
 ```
 
-What's going on here? Well, here we use reduce to build up our `products` object. We send an empty object, `{}` as the
-initial value. So, the first pass, our accumulator `productsObject` will be an empty object.
+What's going on here? Well, here we use reduce to build up our `products` object. In other words, we **reduce** the array to a single object. 
+We send an empty object, `{}` as the initial value. So, the first pass, our accumulator `productsObject` will be an empty object.
 We then return a new object, copying all properties from the accumulator over via the objet spread operator (`...`).
 The first time this runs, it will merge together two empty objects.
 Second, we create a new property on our return object, with the key set to the product id, using javascript dynamic object properties (`{[key]: value}`).
 Lastly, we set this property to an object following our backend developers structure. Everyone is happy!
 
-<!-- Implement a map with reduce to show the versatilityt -->
 
 ### Reduce is versatile
 
@@ -390,7 +414,7 @@ Now, if you run this code, you will get this not so nice looking result
 [1, NaN, NaN, NaN];
 ```
 
-What is going on here? Well, remember the second argument to the function passed in to `map`? Yeah, a number representing the current index of the element in our array. And what is the second argument to `parseInt`? Also a number! However, this argument is the `radix`, or `base` in which to parse the number. This is where we run into trouble! Here is what's going on:
+What is going on here? Well, remember the second argument to the callback function passed in to `map`? Yeah, a number representing the current index of the element in our array. And what is the second argument to `parseInt`? Also a number! However, this argument is the `radix`, or `base` in which to parse the number. This is where we run into trouble! Here is what's going on:
 
 1. First pass, will be translated to `parseInt(1, 0)`. 0 is not a valid base but `parseInt` will ignore this and parse it with base 10 since, you know, this is javascrpit.
 2. Second pass, will be translated to `parseInt(2, 1)`. 1 is not a valid base, and this time, `parseInt` will not ignore this since, you know, this is javascript.
@@ -462,7 +486,7 @@ function makeTypeChecker() {
 }
 ```
 
-Next step is to figure out what to check the element.type against. Remember, that the inner function can remember arguments and variables from the outer function due to scope. So, lets pass in a string to check the type against.
+Next step is to figure out what to check the element.type against. Remember, that the inner function can remember arguments and variables from the outer function due to the outer functions containing scope. So, lets pass in a string to check the type against.
 
 ```js
 function makeTypeChecker(type) {
