@@ -16,7 +16,7 @@ Functional programming is one of many other programming paradigms (you might hav
 **how**. It also emphasizes immutability, and treats functions as "first-class citizens".
 
 So what is a "first-class citizen" in programming, you might ask yourself?
-Well, turns out that first-class citizens are a special group that enjoys some particular right and privileges:
+Well, turns out that first-class citizens are a special group of entities that enjoys some particular right and privileges:
 
 1. They can be stored in variables
 2. They can be passed as an argument to other procedures
@@ -41,14 +41,14 @@ Putting it in words, a higher-order function is a function that does one or both
 Having support for higher-order functions opens a world of possibilities, such as currying, partial application, function composition. These are topics for other blog posts though.
 
 ### Returning functions
+By now, you have read the word "function" about 20 times, but haven't seen a single one. Where is the action you might ask? Well, ask and you shall receive.
 
-That's a lot of functions to keep track of, so let's look at an example.
 
 ```js
 const add = x => y => x + y
 ```
 
-This might look weird with all those arrows, so let's take a look at them with the `function` keyword.
+This might look weird if you are not familiar with arrow functions, so let's take a look at them with the `function` keyword.
 
 ```js
 function add(x) {
@@ -138,7 +138,7 @@ Remember when I said that even if you had not heard about higher-order functions
 
 ### Array.prototype.map
 
-`Array.prototype.map` is a function that takes a callback function and runs it over over each element in the array, returning a new array. It's great for transforming the values of an array without mutating them.
+`Array.prototype.map` is a function that takes a callback function and runs it over each element in the array, returning a new array. It's great for transforming the values of an array without mutating them.
 
 Let's say you have a shopping cart with some items. These items have a `quantity` and an `itemPrice`, but for presentational purposes, you want to show the total price. Mapping the `products` array to a new one and adding a `totalPrice` property is a perfect usage of the `map` function.
 
@@ -205,6 +205,22 @@ Notice, how our solution using higher-order function reads more like spoken lang
 In the solution using the higher-order function `map`, the implementation details of the looping and pushing to a new array is abstracted away from us, letting us focusing at the problems on a higher level (i.e how we create the new object, instead of focusing on the looping and pushing to a new array).
 
 Which one do you think is easier to grasp at a first glance?
+
+
+As a bonus, here is how you could implement your own `map` functions using good ol' imperative javascript (don't do that in your projects, use the built-in function).
+
+```js
+function map(array, mapper) {
+  const newArray = [];
+  for (let i = 0; i < array.length; i++) {
+    newArray[i] = mapper(array[i]);
+  }
+  return newArray;
+}
+
+
+map([1, 2, 3, 4], n => n * 2) // [2, 4, 6, 8]
+```
 
 ### Array.prototype.filter
 
