@@ -1,3 +1,9 @@
+---
+title: Higher Order Functions in Javascript
+date: "2019-12-17T20:00:00.284Z"
+description: Learning and using higher order functions in Javascript
+---
+
 # Higher order functions in Javascript
 
 Higher order functions, you've probably heard the term before. At first glance, it might sound scary, but don't worry.
