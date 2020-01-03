@@ -1,19 +1,19 @@
 ---
 title: Bridging the gap between Swift & React Native
 date: "2020-01-02T11:00:05.169Z"
-description: A guide on how to bridge and and use WebViews built with Swift in React Native (because someone had to do it)
+description: A guide on how to bridge and use WebViews built with Swift in React Native (because someone had to do it)
 ---
 
 # Introduction
 
-React Native is great in many ways, primarily for offering a way to build apps for both iOS and Android using the same codebase, while offering a great deal of tools and functionality for both platforms. However there are rare cases where you might need functionality that is only available through a specific platform's API. In order to access such functionality you need to write native modules using either Swift+Objective-C for iOS, or Java for Android, and bridge them over to React Native.  
-React Native's own documentation on how to do this is in all honesty somewhat lacking at times, and at best it's pretty scattered, so a React Native developer who is new to working with native modules might find themselves spending hours piecing together bits of information from a multitude of different articles and blogposts to get even the simplest of native module to work.  
+React Native is great in many ways, primarily for offering a way to build apps for both iOS and Android using the same codebase while offering plenty of tools and functionality for both platforms. However, there are rare cases where you might need some functionality that is only available through a specific platform's API. To access such functionality you need to write native modules using either Swift+Objective-C for iOS, or Java for Android, and bridge them over to React Native.  
+React Native's documentation on how to do this is in all honesty somewhat lacking at times, and at best it's pretty scattered, so a React Native developer who is new to working with native modules might find themselves spending hours piecing together bits of information from a multitude of different articles and blog posts to get even the simplest of native module to work.  
 
 This guide covers how to bridge a native iOS WebView written in Swift for usage in React Native, and also how to pass data between them. While the example used in the guide will focus on how to bridge a WebView, the same principle can be used for virtually any UIView in Swift.
 
 # Getting started
 
-We will start by creating a very simple WebView in Swift and display it in React Native. In later steps we will make the WebView communicate back and forth with React Native.  
+We will start by creating a very simple WebView in Swift and display it in React Native. In later steps, we will make the WebView communicate back and forth with React Native.  
 
 ## Xcode  
 
@@ -24,13 +24,13 @@ We will start by creating a very simple WebView in Swift and display it in React
 - Directly in your iOS project create a new Swift file.
     - To do this right-click your project folder and select **New File...**
     - Select **Swift File**, then **Next**.
-    - Choose a fitting name for your file. Since we're making a custom native WebView we'll just name it **MyWebView**. Make sure the file will be saved in the **ios** folder. Also make sure the project folder is selected in **Group**. Select your project target.  
+    - Choose a fitting name for your file. Since we're making a custom native WebView we'll just name it **MyWebView**. Make sure the file will be saved in the **ios** folder. Also, make sure the project folder is selected in **Group**. Select your project target.  
 
-![Create Swift File example](./rn-swift.jpg)
+![Create Swift File example](./rn-swift.png)
 
 ### Configure Objective-C bridging header
 
-If this was the first Swift file created in the project a pop-up should appear asking if you would like to configure an Objective-C bridging header. This is needed in order to mix Objective-C and Swift code in the project, which we need to do in order to bridge Swift code to React Native, so go ahead and select **Create Bridging Header**.   
+If this was the first Swift file created in the project a pop-up should appear asking if you would like to configure an Objective-C bridging header. This is needed to mix Objective-C and Swift code in the project, which we need to do in order to bridge Swift code to React Native, so go ahead and select **Create Bridging Header**.   
 The file will be a header file named "**[ProjectName]**-Bridging-Header.h". If you do not get the prompt and are sure you have not created on before, you can create one manually by right-clicking your project folder and selecting **New File...**, then **Header File**.    
 
 Go to the **Build Settings** tab for your project, search for **Swift Compiler - General**, and make sure your bridging header is set as the **Objective-C Bridging Header** setting.
@@ -54,6 +54,7 @@ Open the Swift file you created in the previous step and add the following class
 ```swift
 // MyWebView.swift
 import Foundation
+import WebKit
 import UIKit
 
 @objc(MyWebViewManager)
@@ -75,9 +76,9 @@ class MyWebViewManager: RCTViewManager {
 - The class is created with the `@objc` attribute to specify that it will be exposed and usable in Objective-C code. This can also be used to expose methods and variables, which we'll get to later on in the guide.  
 - Notice that the class inherits from `RCTViewManager`, which comes from the Objective-C file we bridged in "[ProjectName]-Bridging-Header.h".
 - The class overrides the method `requiresMainQueueSetup()`, and returns `true`. This is to make the code run on the main thread, which in this case is needed since only the main thread can make use of the `UIKit` framework. React Native defaults initialization of native modules/components to a background thread unless explicitly stated otherwise.
-- Finally, the `view()` method instantiates the view that is managed by the module. The method is overriden to specify what the view should show.  
+- Finally, the `view()` method instantiates the view that is managed by the module. The method is overridden to specify what the view should show.  
 
-The `view()` method can return virtually any Swift UI Component. In this case it's our custom WebView. Let's add the code for the WebView now. It can be placed in the same file as the ViewManager:  
+The `view()` method can return virtually any Swift UI Component. In this case, it's our custom WebView. Let's add the code for the WebView now. It can be placed in the same file as the ViewManager:  
 
 
 ```swift
@@ -87,7 +88,7 @@ The `view()` method can return virtually any Swift UI Component. In this case it
 
 @objc(MyWebView)
 public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
-    var webView = WKWebView!
+    var webView: WKWebView!
     var webViewURL: NSString = "https://beanloop.se"
 
     public override init(frame: CGRect) {
@@ -95,8 +96,10 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 
         let configuration: WKWebViewConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: frame, configuration: configuration)
-        webView.load(URLRequest(url: self.webViewURL))
-        webView.allowsBackForwardNavigationGestures = true
+        if let url = URL(string: self.webViewURL as String) {
+            webView.load(URLRequest(url: url))
+            webView.allowsBackForwardNavigationGestures = true
+        }
 
         addSubview(webView)
     }
@@ -114,10 +117,11 @@ To bridge the WebView to React Native we need to use Objective-C as an intermedi
 - Directly in your iOS project create a new Objective-C file.
     - Right-click your project folder and select **New File...**
     - Select **Objective-C File**, then **Next**.
-    - Name it **MyWebViewManager**. Make sure the file will be saved in the **ios** folder. Also make sure the project folder is selected in **Group**. Select your project target.
+    - Name it the same as the Swift file, in our case **MyWebView**. Make sure the file will be saved in the **ios** folder. Also, make sure the project folder is selected in **Group**. Select your project target.
 
 ```m
-// MyWebViewManager.m
+// MyWebView.m
+#import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTViewManager.h>
 
@@ -151,13 +155,13 @@ const MyRNWebView = () => {
 }
 ```
 
-Here we use the regular `WebView` component from `react-native-webview` but we pass our own native components as the `component` & `viewManager` in the `nativeConfig`.
+Here we use the regular `WebView` component from `react-native-webview` but we pass our own native components as the `component` & `viewManager` in the `nativeConfig`, as per [React Native's docs](https://facebook.github.io/react-native/docs/webview#nativeconfig).
 
-// TODO Show screenshot of webview in action.
+![WebView in action example](./rn-webview-example.png)
 
 # Communication between React Native and Swift
 
-This far we have our native WebView in Swift and we've managed to bridge it to React Native and view it. Great! But at this state it's rather limited in its usage. It can only view a single predefined URL, and it doesn't offer any information back to React Native either.  
+So far we have made our native WebView in Swift and we've managed to bridge it to React Native and view it. Great! But at this stage, it's rather limited in its usage. It can only view a single predefined URL, and it doesn't offer any information back to React Native either.  
 
 We can fix this by letting the WebView accept props from React Native and set up events from the WebView that React Native can intercept!
 
@@ -177,12 +181,13 @@ While staying on the React Native side, let's add the property `props` to our We
 />
 ```
 
-We then need to update our **MyWebViewManager.m** file to expose the WebView's `webViewURL` variable:
+We then need to update our **MyWebView.m** file to expose the WebView's `webViewURL` variable:
 
-*Note: The exact same name for the class variable must also be used for the prop, in this case `webViewURL`.*
+*Note: The same name for the class variable must also be used for the prop, in this case, `webViewURL`.*
 
 ```m
-// MyWebViewManager.m
+// MyWebView.m
+#import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTViewManager.h>
 
@@ -193,7 +198,7 @@ RCT_EXPORT_VIEW_PROPERTY(webViewURL, NSString)
 @end
 ```
 
-Finally, in our Swift class we need to intercept the prop, and handle it accordingly. Leave the Manager class alone but update the `MyWebView` class:
+Finally, in our Swift class, we need to intercept the prop and handle it accordingly. Leave the Manager class alone but update the `MyWebView` class:
 
 ```swift
 // MyWebView.swift
@@ -202,13 +207,13 @@ Finally, in our Swift class we need to intercept the prop, and handle it accordi
 
 @objc(MyWebView)
 public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
-    var webView = WKWebView!
+    var webView: WKWebView!
     var webViewURL: NSString?
 
     @objc func setWebViewURL(_ val: NSString) {
         webViewURL = val
         
-        if let url = URL(string: self.webViewURL as String) {
+        if let url = URL(string: self.webViewURL as! String) {
             webView.load(URLRequest(url: url))
             webView.allowsBackForwardNavigationGestures = true
         }
@@ -229,7 +234,7 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 }
 ```
 
-This moves the code that loads the url from `init()` to the `setWebViewURL()` method which is automatically called when the `webViewURL` prop is set. This is because at the time when `init()` is run the value from the prop hasn't been set yet.
+This moves the code that loads the URL from `init()` to the `setWebViewURL()` method which is automatically called when the `webViewURL` prop is set. This is because at the time when `init()` is run the value from the prop hasn't been set yet.
 
 Try running the updated code and it should still work while passing the URL as a prop from React Native!
 
@@ -254,24 +259,20 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 
     // Add
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-      if (navigationAction.request.url?.absoluteString == self.webViewURL as String) {
-        decisionHandler(.allow)
-      }
-      else {
-        onRedirect!(["url": navigationAction.request.url?.absoluteString ?? ""])
-        decisionHandler(.cancel)
-      }
+      onRedirect!(["url": navigationAction.request.url?.absoluteString ?? ""])
+      decisionHandler(.allow)
     }
 }
 ```
 
 - We add another variable to the `MyWebView` class, this time `onRedirect()`, which is of type `RCTDirectEventBlock`.  
-- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. If the navigation action is the same as the initial `webViewURL` we allow the redirect, otherwise we send the URL to the `onRedirect()` event emitter and close the WebView.   
+- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. In this case, we simply allow every redirect and trigger the `onRedirect()` event to send the URL back to React Native.  
 
-We need to update our Objective-C **MyWebViewManager.m** file to expose the new variable, same as before:
+We need to update our Objective-C **MyWebView.m** file to expose the new variable, same as before:
 
 ```m
-// MyWebViewManager.m
+// MyWebView.m
+#import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTViewManager.h>
 
@@ -283,7 +284,7 @@ RCT_EXPORT_VIEW_PROPERTY(onRedirect, RCTDirectEventBlock)
 @end
 ```
 
-We also need to add another import to our bridging header file, to allow the usage of events:  
+We also need to add another couple of imports to our bridging header file, to allow the usage of events:  
 
 ```h
 // [ProjectName]-Bridging-Header.h
@@ -293,7 +294,7 @@ We also need to add another import to our bridging header file, to allow the usa
 #import "React/RCTEventEmitter.h"
 ```
 
-Finally, back to our React Native where we will intercept the event:  
+Finally, back to our React Native where we will intercept the event, and log the URL to the console:  
 
 ```js
     <WebView
@@ -308,17 +309,21 @@ Finally, back to our React Native where we will intercept the event:
             viewManager: MyWebViewManager,
         }}
     />
-```
+```  
 
-// TODO Show screenshot of webview in action.
+We can see the updated WebView in action below:
+
+![WebView in action example 2](./rn-webview-example-2.png)
 
 # Done!
 
-// TODO Add conclusion / final words
+And that's that! As you can see it's not all that complicated to bridge Swift code to React Native. The biggest hurdle is the lack of good documentation on the subject. The official documentation is an OK start but I found it wasn't enough to get a complete example working, which is understandable given that bridging code from Swift to React Native is something the vast majority of React Native developers won't need to do.  
+
+Hopefully this blog post can be of help to someone who needs it!
 
 # Read more
 
-I mentioned that one might find themselves pieceing together information from multiple sources when working with native modules in React Native. Here are some of the links I saved from the countless of posts, articles, and docs I went through. Enjoy!
+I mentioned that one might find themselves piecing together information from multiple sources when working with native modules in React Native. Here are some of the links I saved from the countless of posts, articles, and docs I went through. Enjoy!
 
 ### Docs
 [Custom WebView](https://facebook.github.io/react-native/docs/custom-webview-ios)  
