@@ -11,7 +11,7 @@ If you've been coding javascript for a while, you've probably used them many tim
 
 ## Functional programming
 
-Before we start examining what a higher-order function is, let's take a step back and look at where they come from - functionals programming.
+Before we start examining what a higher-order function is, let's take a step back and look at where they come from - functional programming.
 Functional programming is one of many other programming paradigms (you might have heard of Object-Oriented Programming). Functional programming is a way of programming where you tell the computer **what** your program does, instead of
 **how**. It also emphasizes immutability, and treats functions as "first-class citizens".
 
@@ -574,4 +574,4 @@ const parser = createParser({
 
 ## Wrap up
 
-So, now you know you hopefully know how to use higher-order functions and the benefits of them. If you're already using them - great, use them and use them more. If not, go out into the world throwing and returning functions everywhere! Fingers crossed, you might not have to write a single `for` loop ever again!
+So, now you hopefully know how to use higher-order functions, and the benefits of them. If you're already using them - great, use them and use them more. If not, go out into the world throwing and returning functions everywhere! Fingers crossed, you might not have to write a single `for` loop ever again!
