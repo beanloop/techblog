@@ -21,7 +21,6 @@ function Bio() {
       query={bioQuery}
       render={data => {
         const { author, social } = data.site.siteMetadata
-        console.log(data.avatar.childImageSharp.fixed)
         return (
           <div
             style={{
