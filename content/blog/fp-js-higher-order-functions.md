@@ -1,6 +1,6 @@
 ---
 title: Higher-order Functions in Javascript
-date: "2019-12-17T20:00:00.284Z"
+date: "2020-02-25T20:00:00.284Z"
 description: Learning and using higher-order functions in Javascript
 ---
 
