@@ -266,7 +266,7 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 ```
 
 - We add another variable to the `MyWebView` class, this time `onRedirect()`, which is of type `RCTDirectEventBlock`.  
-- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. In this case, we simply allow every redirect and trigger the `onRedirect()` event to send the URL back to React Native.  
+- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. In this case, we simply allow every redirect to trigger the `onRedirect()` event to send the URL back to React Native.  
 
 We need to update our Objective-C **MyWebView.m** file to expose the new variable, same as before:
 
