@@ -1,6 +1,6 @@
 ---
 title: Bridging the gap between Swift & React Native
-date: "2020-01-02T11:00:05.169Z"
+date: "2020-03-02T15:14:43.779Z"
 description: A guide on how to bridge and use WebViews built with Swift in React Native (because someone had to do it)
 ---
 
