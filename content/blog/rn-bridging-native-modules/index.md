@@ -163,7 +163,7 @@ Here we use the regular `WebView` component from `react-native-webview` but we p
 
 # Communication between React Native and Swift
 
-So far we have made our native WebView in Swift and we've managed to bridge it to React Native and view it. Great! But at this stage, it's rather limited in its usage. It can only view a single predefined URL, and it can't return any data back to the React Native side either.  
+So far we have made our native WebView in Swift and we've managed to bridge it to React Native and render it. Great! But at this stage, it's rather limited in its usage. It can only view a single predefined URL, and it can't return any data back to the React Native side either.  
 
 We can fix this by letting the WebView accept props from React Native and set up events from the WebView that React Native can intercept!
 
@@ -242,7 +242,7 @@ Try running the updated code and it should still work while passing the URL as a
 
 ## Passing data back from Swift class to React Native
 
-The final step of this guide will be to pass data from Swift back to React Native. For this example whenever the WebView redirects it will pass the URL to React Native. To do this we need to make use of events.  
+The final step of this guide will be to pass data from Swift back to React Native. For this example whenever the WebView redirects, it will pass the URL to React Native. To do this we need to make use of events.  
 
 In our Swift class again: 
 
@@ -268,7 +268,7 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 ```
 
 - We add another property to the `MyWebView` class, this time `onRedirect()`, which is of type `RCTDirectEventBlock`.  
-- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. In this case, we simply allow every redirect and trigger the `onRedirect()` event to send the URL back to React Native.  
+- Then we implement the `webView` method that decides the policy for navigation actions, e.g. redirects. In this case, we simply allow every redirect to trigger the `onRedirect()` event to send the URL back to React Native.  
 
 We need to update our Objective-C **MyWebView.m** file to expose the new property, same as before:
 
