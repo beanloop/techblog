@@ -240,7 +240,7 @@ Try running the updated code and it should still work while passing the URL as a
 
 ## Passing data back from Swift class to React Native
 
-The final step of this guide will be to pass data from Swift back to React Native. For this example whenever the WebView redirects it will pass the URL to React Native. To do this we need to make use of events.  
+The final step of this guide will be to pass data from Swift back to React Native. For this example whenever the WebView redirects, it will pass the URL to React Native. To do this we need to make use of events.  
 
 In our Swift class again: 
 
