@@ -6,10 +6,10 @@ description: A guide on how to bridge and use WebViews built with Swift in React
 
 # Introduction
 
-React Native is great in many ways, primarily for offering a way to build apps for both iOS and Android using the same codebase while offering plenty of tools and functionality for both platforms. However, there are rare cases where you might need some functionality that is only available through a specific platform's API. To access such functionality you need to write native modules using either Swift+Objective-C for iOS, or Java for Android, and bridge them over to React Native.  
+React Native is great in many ways, primarily for offering a way to build apps for both iOS and Android using the same codebase while offering plenty of tools and functionality for both platforms. However, there are rare cases where you might need some functionality that is only available through a specific platform's API. To access such functionality you need to write native modules using either Swift+Objective-C for iOS, or Java/Kotlin for Android, and bridge them over to React Native.  
 React Native's documentation on how to do this is in all honesty somewhat lacking at times, and at best it's pretty scattered, so a React Native developer who is new to working with native modules might find themselves spending hours piecing together bits of information from a multitude of different articles and blog posts to get even the simplest of native module to work.  
 
-This guide covers how to bridge a native iOS WebView written in Swift for usage in React Native, and also how to pass data between them. While the example used in the guide will focus on how to bridge a WebView, the same principle can be used for virtually any UIView in Swift.
+This post will focus on the iOS side since information on how to do this was especially difficult to find compared to Android. This guide covers how to bridge a native iOS WebView written in Swift for usage in React Native, and also how to pass data between them. While the example used in the guide will focus on how to bridge a WebView, the same principle can be used for virtually any UIView in Swift.
 
 # Getting started
 
@@ -96,12 +96,12 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
 
         let configuration: WKWebViewConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: frame, configuration: configuration)
-        if let url = URL(string: self.webViewURL as String) {
+        if let url = URL(string: webViewURL as! String) {
             webView.load(URLRequest(url: url))
             webView.allowsBackForwardNavigationGestures = true
         }
 
-        addSubview(webView)
+        addSubview(webView) // `addSubview` method from the UIView class
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -215,7 +215,8 @@ public class MyWebView: UIView, WKNavigationDelegate, WKUIDelegate {
     @objc func setWebViewURL(_ val: NSString) {
         webViewURL = val
         
-        if let url = URL(string: self.webViewURL as! String) {
+        // This code was previously in the `init` method
+        if let url = URL(string: webViewURL as! String) {
             webView.load(URLRequest(url: url))
             webView.allowsBackForwardNavigationGestures = true
         }
@@ -313,6 +314,8 @@ Finally, back to our React Native where we will intercept the event, and log the
     />
 ```  
 
+This may not be the most useful thing to pass back to the React Native side, it's just an example on how it's done. The same principle can be applied to virtually any type of data.   
+
 We can see the updated WebView in action below:
 
 ![WebView in action example 2](./rn-webview-example-2.png)
@@ -321,7 +324,7 @@ We can see the updated WebView in action below:
 
 And that's that! As you can see it's not all that complicated to bridge Swift code to React Native. The biggest hurdle is the lack of good documentation on the subject. The official documentation is an OK start but I found it wasn't enough to get a complete example working, which is understandable given that bridging code from Swift to React Native is something the vast majority of React Native developers won't need to do.  
 
-Hopefully this blog post can be of help to someone who needs it!
+Hopefully this blog post can be of help to someone who needs it! Stay tuned for the next part where we'll switch focus to bridging a native Android WebView in Java to React Native!
 
 # Read more
 
