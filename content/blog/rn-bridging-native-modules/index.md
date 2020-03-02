@@ -161,7 +161,7 @@ Here we use the regular `WebView` component from `react-native-webview` but we p
 
 # Communication between React Native and Swift
 
-So far we have made our native WebView in Swift and we've managed to bridge it to React Native and view it. Great! But at this stage, it's rather limited in its usage. It can only view a single predefined URL, and it doesn't offer any information back to React Native either.  
+So far we have made our native WebView in Swift and we've managed to bridge it to React Native and render it. Great! But at this stage, it's rather limited in its usage. It can only view a single predefined URL, and it doesn't offer any information back to React Native either.  
 
 We can fix this by letting the WebView accept props from React Native and set up events from the WebView that React Native can intercept!
 
