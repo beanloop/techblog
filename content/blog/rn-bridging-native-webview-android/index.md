@@ -1,14 +1,16 @@
 ---
-title: Bridging Android native modules to React Native
-date: "2020-03-03T15:14:43.779Z"
-description: A guide on how to bridge a WebView built in Java to be used in React Native
+title: Bridging Android Java native views to React Native
+date: "2020-03-09T10:45:14.612Z"
+description: A guide on how to bridge an activity with native views built in Java to be used in React Native
 ---
 
 # Introduction
 
-While React Native is a great way to build apps with the same major codebase for both iOS and Android, there may be cases where you must make use of a specific platform's native modules to give your app that extra bit "native feel", or to access some native functionality that is only available through their API. React Native offers several native modules already integrated into their framework, but if you need some specific functionality you may need to write your own using either Swift+Objective-C for iOS, or Java/Kotlin for Android, and bridge it over to React Native yourself. I found the documentation for this to be somewhat lacking, which is why I've taken it upon myself to write a couple of guides on how to make and bridge a simple native module to use in React Native.
+While React Native is a great way to build apps with the same major codebase for both iOS and Android, there may be cases where you need to access some native functionality that is only available through their API. React Native offers several native modules and views already integrated into their framework, but if you need some specific functionality you may need to write your own using either Swift+Objective-C for iOS, or Java/Kotlin for Android, and bridge it over to React Native yourself. I found the documentation for this to be somewhat lacking, which is why I've taken it upon myself to write a couple of guides on how to make and bridge a native view to use in React Native.
 
-In a previous blog post, I covered how to bridge a native iOS WebView written in Swift to React Native, render it in our app, and pass data between the WebView and React Native. [Check that out here!](../rn-bridging-native-webview-ios) This time we are going to switch focus to Android and go through step-by-step how to do the same thing for a WebView made in Java. This particular example implements a WebView, but the same practice could be applied to any type of native view.    
+In a previous blog post, we covered how to bridge a native iOS WebView written in Swift to React Native, render it in our app, and pass data between the WebView and React Native. [Check that out here!](../rn-bridging-native-webview-ios) This time we are going to switch focus to Android and go through step-by-step how to do something similar for a WebView made in Java. This particular example implements a WebView, but the same practice could be applied to any type of native view.   
+
+Instead of bridging the WebView by itself to use it as a [Native UI Component](https://reactnative.dev/docs/native-components-android), we will be bridging and launching a custom made activity which views the WebView. This way, we have all the control we would normally have while making native views, but still being able to use it in our React Native app. This could be useful for handling some custom native authentication flow, or some other collection of functionality which requires a series of native views.     
 
 # Getting started
 
@@ -24,9 +26,9 @@ The first step is to create the Java files required for the WebView.
 
 ### Activity
 
-To view a Java WebView in React Native we need to run and view it in its own activity.   
+Let's create the activity which, when launched, will handle viewing the WebView.   
 
-*Note: Android apps are comprised of multiple activities, each one handling their own view(s) and user interactions when started. In Android development, one activity generally implements one screen of the app. The first activity to start is always the main activity.*
+*Note: Android apps are comprised of multiple activities, each one handling their own view(s) and user interactions when launched. In Android development, one activity generally implements one screen of the app. The first activity to start is always the main activity.*
 
 - In our existing package folder, create a new activity file, right next to `MainActivity.java`. Give it a fitting name, in our case, we'll just name it `MyWebViewActivity.java`.    
 
@@ -47,7 +49,7 @@ public class MyWebViewActivity extends ReactActivity {
 }
 ```
 
-As you may have noticed this activity doesn't really do anything at this point, besides allowing itself to be started. We'll revisit this file later on in the guide, once we've created our actual WebView.
+As you may have noticed this activity doesn't really do anything at this point, besides allowing itself to be launched. We'll revisit this file later on in the guide, once we've created our actual WebView.
 
 ### AndroidManifest
 
@@ -151,9 +153,9 @@ public class MyWebViewActivity extends ReactActivity {
 Here we set our activity's content to our WebView. By default, this will take up the entirety of the screen. You can customize the view size in different ways, the simplest is setting the layout params for the `MyWebView`:   
 `myWebView.setLayoutParams(new LayoutParams(width, height))`.
 
-## Bridge native module to React Native
+## Bridge as a native module to React Native
 
-At this point, we have created our activity which, when started, will set its content view to `MyWebView`. If we were building our entire Android app in Java we would be all set to render the WebView. It would be as simple as switching to the `MyWebViewActivity`. That is essentially what we need to do in React Native as well, however, the activity is currently inaccessible from the React Native side. We still need to bridge the activity over to React Native, so we can access it. To do that we need to export and expose, a native module to React Native with a method that starts the activity. Let's go ahead and set up our *activity starter* native module.   
+At this point, we have created our activity which, when started, will set its content view to `MyWebView`. If we were building our entire Android app in Java we would have all we need to render the WebView. It would be as simple as switching to the `MyWebViewActivity`. That is essentially what we need to do in React Native as well, however, the activity is currently inaccessible from the React Native side. We still need to bridge the activity over to React Native, so we can access it. To do that we need to export and expose a native module to React Native with a method that starts the activity. Let's go ahead and set up our *activity starter* native module.   
 
 - In the same folder you created the `MyWebViewActivity` file, create a new Java file, and give it a name. We'll go with `MyWebViewActivityStarter.java`.  
 You need the following code here:   
@@ -241,7 +243,7 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
-We have now successfully bridged our WebView to React Native by setting it to the content view of an activity, that is made available to React Native by starting it in a native module, which is then placed in a package, which is in turn exported to React Native by adding it to their list of packages.  
+We have now successfully bridged our WebView to React Native by setting it to the content view of an activity, that is made available to React Native by launching it in a native module, which is then placed in a package, which is in turn exported to React Native by adding it to their list of packages.  
 Phew!    
 
 If you're still with us after all that, we still need to try it out in our React Native app!
@@ -470,9 +472,7 @@ See the updated WebView in action below:
 
 # Done!
 
-That's the end of this guide. If we navigate around a bit we'll see in the console that the new URLs sent through the `DeviceEventEmitter` are being logged successfully! While this may not be the most useful example in practice, it should serve as an example as to how you can pass data in between React Native and native Java code.   
-
-Hopefully, this blog post can be of help to someone who needs it!
+That's the end of this guide. If we navigate around a bit we'll see in the console that the new URLs sent through the `DeviceEventEmitter` are being logged successfully! While this may not be the most useful example in practice, it serves as an example of how you can launch an activity with custom native views from React Native, and pass data in between them. From here, you can do anything you would normally be able to do with activities and native views while being able to switch back to React Native at any time.  
 
 # Read more
 
